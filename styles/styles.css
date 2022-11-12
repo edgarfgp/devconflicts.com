@@ -28,7 +28,7 @@
 
 .container {
     position: absolute;
-    background-image: url('./public/bg.jpg');
+    background-image: url('../public/bg.jpg');
     filter: blur(3px);
     background-size: cover;
     background-repeat: no-repeat;
