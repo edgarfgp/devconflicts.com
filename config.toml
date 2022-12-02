@@ -1,0 +1,65 @@
+baseURL = ''
+languageCode = 'en-us'
+title = 'DevConflicts | Edgar Gonzalez Blog'
+theme = 'LoveIt'
+enableGitInfo = true
+
+[params]
+  # site default theme ["auto", "light", "dark"]
+  defaultTheme = "auto"
+  # public git repo url only then enableGitInfo is true
+  gitRepo = "https://github.com/edgarfgp/devconflicts.com"
+  # date format
+  dateFormat = "2006-01-02"
+  # website description for RSS, SEO, Open Graph and Twitter Cards
+  description = "Dev Conflicts is a blog about my experience resolving issues as a Developer."
+
+  # Header config
+  [params.header]
+    # desktop header mode ["fixed", "normal", "auto"]
+    desktopMode = "fixed"
+    # mobile header mode ["fixed", "normal", "auto"]
+    mobileMode = "auto"
+    # Header title config
+    [params.header.title]
+      # URL of the LOGO
+      logo = ""
+      # title name
+      name = "DevConflicts"
+      # you can add extra information before the name (HTML format is supported), such as icons
+      pre = ""
+      # you can add extra information after the name (HTML format is supported), such as icons
+      post = ""
+      # whether to use typeit animation for title name
+      typeit = true
+
+  # Footer config
+  [params.footer]
+    enable = true
+    # Custom content (HTML format is supported)
+    custom = "<a href='https://github.com/edgarfgp/devconflicts.com' target='_blank' rel='noopener'>Open Source Blog By Edgar Gonzalez</a>"
+    # whether to show Hugo and theme info
+    hugo = false
+    # whether to show copyright info
+    copyright = false
+    # whether to show the author
+    author = true
+    # site creation time
+    since = 2022
+
+[params.home.profile]
+      # URL of avatar shown in home page
+      avatarURL = "/images/edgar-profile.jpg"
+      # title shown in home page (HTML format is supported)
+      title = "Edgar Gonzalez"
+      # subtitle shown in home page (HTML format is supported)
+      subtitle = "I'm a Software Developer"
+      # whether to use typeit animation for subtitle
+      typeit = false
+      # whether to show social links
+      social = true
+
+# Social links
+[params.social]
+Twitter = 'efgpdev'
+Github = 'edgarfgp'
