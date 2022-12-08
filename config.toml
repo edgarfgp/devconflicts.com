@@ -53,7 +53,7 @@ enableGitInfo = true
       # title shown in home page (HTML format is supported)
       title = "Edgar Gonzalez"
       # subtitle shown in home page (HTML format is supported)
-      subtitle = "I'm a Software Developer"
+      subtitle = ""
       # whether to use typeit animation for subtitle
       typeit = false
       # whether to show social links
