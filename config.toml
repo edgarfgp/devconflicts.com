@@ -33,6 +33,33 @@ enableGitInfo = true
       # whether to use typeit animation for title name
       typeit = true
 
+
+  [params.page.share]
+    enable = true
+    Twitter = true
+    Facebook = false
+    Linkedin = false
+    Whatsapp = false
+    Pinterest = false
+    Tumblr = false
+    HackerNews = false
+    Reddit = false
+    VK = false
+    Buffer = false
+    Xing = false
+    Line = false
+    Instapaper = false
+    Pocket = false
+    Flipboard = false
+    Weibo = false
+    Blogger = false
+    Baidu = false
+    Odnoklassniki = false
+    Evernote = false
+    Skype = false
+    Trello = false
+    Mix = false
+
   # Footer config
   [params.footer]
     enable = true

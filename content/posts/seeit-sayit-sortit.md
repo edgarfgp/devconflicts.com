@@ -2,6 +2,7 @@
 title: See it, Say it, Sort it!
 date: 2022-12-02T11:31:23+01:00
 author: 'Edgar'
+tag: fsharp, compiler
 draft: false
 ---
 
@@ -45,7 +46,7 @@ type HelpBy =
     |  SayIt
  
 match msg with
-| SayIt _ -> ""
+| SayIt _ -> ()
 ```
 
 And looks at its [AST(Abstract Syntax Tree)](https://en.wikipedia.org/wiki/Abstract_syntax_tree) representation. F# has an extraordinary tool called [fantomas](https://fsprojects.github.io/fantomas-tools/)
@@ -73,13 +74,13 @@ module Tests
 type HelpBy = SayIt
 let msg= SayIt
 match msg with
-| SayIt _ -> “” 
+| SayIt _ -> ()
     """ 
      |> typecheck
      |> shouldSuceed
 ```
 
-After reading the extensive [documentation](https://github.com/dotnet/fsharp/blob/main/docs/index.md) about how the compiler is structured . I found that a good starting point might be [CheckPatterns.fs](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/Checking/CheckPatterns.fs#L598) where the compiler check a long identifier(described in the AST as LongIdent) case that has been resolved to a union case or F# exception constructor. So we know we are in corrent place.
+After reading the extensive [documentation](https://github.com/dotnet/fsharp/blob/main/docs/index.md) about how the compiler is structured . I found that a good starting point might be [CheckPatterns.fs](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/Checking/CheckPatterns.fs#L598) where the compiler check a long identifier(described in the AST as `LongIdent`) case that has been resolved to a union case or F# exception constructor. So we know we are in corrent place.
 
 ```fsharp
 SynMatchClause
@@ -92,7 +93,7 @@ SynMatchClause
 
 ```
 
-We also know that we want to raise a compiler warning when we use an underscore “_” and that this is represented as Pats [Wild] in the AST. 
+We also know that we want to raise a compiler warning when we use an underscore “_” and that this is represented as `Pats[Wild]` in the AST. 
 
 
 ## Implementation
@@ -142,5 +143,4 @@ In summary, We now have a new compiler warning that wil make our life easier whe
 
 For this we will use Jetbrains [Rider](https://www.jetbrains.com/rider/) as our editor of choice. This can be a whole new post about how I implemented the quick fix. At the time of this post [resharper-fsharp](https://github.com/JetBrains/resharper-fsharp) is not using the latest compiler version but our quick fix will also work with some small modifications.
 
-
-## Conclusions
+![Quick fix](/images/union-case-quick-fix.gif)
