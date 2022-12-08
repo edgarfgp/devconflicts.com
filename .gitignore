@@ -9,6 +9,7 @@ Thumbs.db
 # Files that might appear on external disks
 .Spotlight-V100
 .Trashes
+.hugo_build.lock
 
 # Generated files by hugo
 /public/
