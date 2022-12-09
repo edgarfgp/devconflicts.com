@@ -13,7 +13,7 @@ If you live in the Uk and use public transport you might have heard the [See it,
 So in this post, I wanted to play with this phrase and encourage you to do the same but for F#.
 
 ## Introduction
-In this post, I will show you that contributing to the F# compiler is not difficult, You might be thinking you need to be an expert and know a lot of low-level concepts, while this is true if you want to work on a specific feature, the reality is that there are multiple areas where you can start without previous experience:
+In this post, I will show you that contributing to the F# compiler is not difficult, You might be thinking you need to be an expert and know a lot of low-level concepts, while this is true if you want to work on a specific feature, the reality is that there are multiple areas where you can start without previous experience ie [good first issues](https://github.com/dotnet/fsharp/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+label%3A%22help+wanted%22):
 - Fixing typos
 - IDE's quick fixes
 - Simply adding more testing to existing features
@@ -51,9 +51,10 @@ So I followed my own advice and went to the F# compiler [repo](https://github.co
 So I decided to give it a try `(Sort it)`.
 
 ## Analysis
+We can start by choosing a minimal reproducible example, so we can test our changes, and focus on the problem.
+In our case, a single case union type with a wildcard pattern match will be a good starting point.
 
-First, we can start by choosing a minimal repro. In our case, a single case union type with a wildcard pattern match will be a good starting point.
-
+```fsharp
 ```fsharp
 type HelpBy =
     |  SayIt
@@ -65,19 +66,10 @@ Then, we need to understand how our source code is represented in the compiler. 
 
 > **Abstract Syntax Tree** is a way of representing the structure of a program in a hierarchical tree-like format. It is used to make it easier for a computer to understand and process a program. Each node in the tree represents a different part of the program, such as a variable, function, or statement. This allows the computer to quickly and accurately execute the instructions in the program. This will be important for us in the implementation part
 
-F# ecosystem has [Fantomas tool](https://fsprojects.github.io/fantomas-tools/) that can help us to visualize the AST.
+F# ecosystem has a source code formatter called [Fantomas](https://fsprojects.github.io/fantomas/) which includes an AST visualizer called [Fantomas tool](https://fsprojects.github.io/fantomas-tools/).
 
-Our minimal repro will be represented as follows:
+![AST Representation](/images/ast-representation.png)
 
-```fsharp
-SynMatchClause
-    (LongIdent
-        (SynLongIdent ([SayIt], [], [None]), None, None,
-            Pats [Wild], None),
-            None,
-            Const
-            (String ("Raise an issue on GitHub", Regular)))
-```
 From the AST representation we can highlight the following:
 - `SynMatchClause` is the root node and tells us that we are dealing with a pattern match
 - `LongIdent` is the pattern match, in our case, it is a single case union type
@@ -85,7 +77,7 @@ From the AST representation we can highlight the following:
 - `Pats` is the wildcard pattern, in our case, it is `_`
 - `Const` is the string literal, in our case, it is `"Raise an issue on GitHub"`
 
-`SynPat` type we can see that the `SynPat` type includes our `LongIdent`. This means that we can use the `LongIdent` to get the `SynLongIdent` and then we can check if the `SynArgPats` contains a wildcard pattern.
+If we look at the compiler `SynPat` type we can see that the `SynPat` type includes our `LongIdent`. This means that we can use the `LongIdent` to get the `SynLongIdent` and then we can check if the `SynArgPats` contains a wildcard pattern.
 
 ```fsharp
 [<NoEquality; NoComparison; RequireQualifiedAccess>]
@@ -102,7 +94,7 @@ type SynPat =
         range: range
 ```
 
-Now that we know how the code is represented in the compiler. We can start by adding a test to validate the existing behavior and from there start modifying some code.
+Now that we know how the code is represented in the compiler. We can start by adding a unit test to validate the existing behavior. This will help us to validate our changes before and after.
 
 ```fsharp
  [<Fact>]
@@ -117,27 +109,30 @@ module Tests =
     |> typecheck
     |> shouldSuceed
 ```
-After reading the extensive [documentation](https://github.com/dotnet/fsharp/blob/main/docs/index.md) about how the compiler is structured. I found that a good starting point might be:
-- [CheckPatterns.fs](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/Checking/CheckPatterns.fs#L598) where the compiler check a long identifier(described in the AST as `LongIdent`) case that has been resolved to a union case or F# exception constructor. So we know we are in the correct place.
+> Adding a unit test is really easy. Just use the  `FSharp """ Your Code """` function and then call `typecheck` and `shouldSuceed` functions.
+
+To learn more about how the compiler is structured, I went on reading the [documentation](https://github.com/dotnet/fsharp/blob/main/docs/index.md), it is easy to read, but also extensive! You can find explanations and videos about almost everything inside it.
+
+After reading it I found that a good starting point might be [CheckPatterns.fs](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/Checking/CheckPatterns.fs#L598) where the compiler check a long identifier(described in the AST as `LongIdent`) case that has been resolved to a union case or F# exception constructor. So we know we are in the correct place.
 
 ## Implementation
 
-But before we start modifying the code, we need to find a clear and meaningful warning message.
+But before we start modifying the code, we need to find a clear and meaningful warning message. So I went to the related issue to discuss about this. I got a lot of feedback and suggestions, and I ended up with `Pattern discard is not allowed for union case that takes no data`.
+Now we need to add our error message to [FSComp.txt](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/FSComp.txt#L1661). This is the file that contains most of the error messages that the compiler uses.
 
-What about `Pattern discard is not allowed for union case that takes no data.` seems to be a good candidate.
-We need to add our error message to [FSComp.txt](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/FSComp.txt#L1661), so we can use in our implementation.
+We need to provide a unique error code, name and message.
+> 3548, matchNotAllowedForUnionCaseWithNoData, Pattern discard is not allowed for union case that takes no data.
 
 If you follow the logic of how patterns are checked you will get a function called [TcPatLongIdentUnionCaseOrExnCase](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/Checking/CheckPatterns.fs) and in it, you will find the following code:
 
 ```fsharp
-// We can see that the compiler does not check for argument names on union types
 let args, extraPatternsFromNames =
-         match args with
-         | SynArgPats.Pats args -> args, []
+    match args with
+    | SynArgPats.Pats args -> args, []
 ```
+> We can see in this function, it is not checking for wildcards or named patterns, so we need to add it.
 
-So we can add a check for `SynPat.Wild` and `SynPat.Named` based on if a union type has arguments names.
-
+One way to fix it would be to add new checks to the pattern matching for the wildcard or named patterns as follows:
 ```fsharp
 let args, extraPatternsFromNames =
      match args with
@@ -146,8 +141,10 @@ let args, extraPatternsFromNames =
          | [ SynPat.Wild _ ] | [ SynPat.Named _ ] when argNames.IsEmpty  ->
              warning(Error(FSComp.SR.matchNotAllowedForUnionCaseWithNoData(), m))
 ```
+> Now this function checks for `SynPat.Wild` and `SynPat.Named` patterns in `SynArgPats.Pats` and raises a warning if the union case has no data as `argNames` is empty.
 
-Now we have a code that makes sense from the implementation point. We need to validate this change and the best way to do it is by adding as many [tests](https://github.com/dotnet/fsharp/blob/main/tests/FSharp.Compiler.ComponentTests/ErrorMessages/UnionCasePatternMatchingErrors.fs) as you can. In our case, we need to make sure our warning is working on single and multi-case union types. For instance, we now expect a warning in our initial sample.
+Now we have a code that makes sense from the implementation point. We need to validate this change and the best way to do it is by adding as many tests as you can. In our case, we can add those tests to [UnionCasePatternMatchingErrors.fs](https://github.com/dotnet/fsharp/blob/main/tests/FSharp.Compiler.ComponentTests/ErrorMessages/UnionCasePatternMatchingErrors.fs) in the `FSharp.Compiler.ComponentTests` project.
+We need to make sure our warning is working on single and multi-case union types. For instance, we now expect a warning in our initial sample.
 
 ```fsharp
 type HelpBy =
@@ -176,17 +173,19 @@ module Tests =
     | SayIt _ -> "Raise an issue on GitHub"
     """ 
     |> typecheck
-     |> shouldFail
-     |> withSingleDiagnostic (Warning 3548, Line 6, Col 12, Line 7, Col 13, "Pattern discard is not allowed for union case that takes no data.")
+    |> shouldFail
+    |> withSingleDiagnostic (Warning 3548, Line 6, Col 12, Line 7, Col 13, "Pattern discard is not allowed for union case that takes no data.")
 ```
 
 Now it is time to raise a [Pull request](https://github.com/dotnet/fsharp/pull/14055) to validate our fix. The compiler team will help and guide you through the process, ask you to cover more cases, testing to make sure the implementation is bulletproof.
+
+Congratulations! We have just contributed to the F# compiler and it was not that hard, right?
 
 ## IDE support
 
 We now have a new compiler warning that will make our life easier when working with F#. But we can do better and implement a quick fix in our preferred IDE.
 
-We will use Jetbrains [Rider](https://www.jetbrains.com/rider/) as our editor of choice. 
+We will use Jetbrains [Rider](https://www.jetbrains.com/rider/) as our editor of choice.
 This can be a whole new post about how I [implemented](https://github.com/JetBrains/resharper-fsharp/pull/444) the quick fix.
 
 At the time of this post [resharper-fsharp](https://github.com/JetBrains/resharper-fsharp) is not using the latest compiler version so it won't report this warning.
