@@ -1,8 +1,16 @@
 baseURL = ''
 languageCode = 'en-us'
-title = 'DevConflicts | Edgar Gonzalez Blog'
+#title = 'DevConflicts | Edgar Gonzalez Blog'
 theme = 'LoveIt'
 enableGitInfo = true
+enableRobotsTXT = true
+enableEmoji = true
+
+# Author config
+#[author]
+#  name = "Edgar Gonzalez"
+#  email = "edgargonzalez.info@gmail.com"
+#  link = "https://devconflicts.com"
 
 [params]
   # site default theme ["auto", "light", "dark"]
@@ -31,8 +39,43 @@ enableGitInfo = true
       # you can add extra information after the name (HTML format is supported), such as icons
       post = ""
       # whether to use typeit animation for title name
-      typeit = true
+      typeit = false
 
+  [params.page]
+    # whether to hide a page from home page
+    hiddenFromHomePage = false
+    # whether to hide a page from search results
+    hiddenFromSearch = false
+    # whether to enable twemoji
+    twemoji = false
+    # whether to enable lightgallery
+    lightgallery = false
+    # whether to enable the ruby extended syntax
+    ruby = true
+    # whether to enable the fraction extended syntax
+    fraction = true
+    # whether to enable the fontawesome extended syntax
+    fontawesome = true
+    # whether to show link to Raw Markdown content of the content
+    linkToMarkdown = true
+    # whether to show the full text content in RSS
+    rssFullText = false
+    # Table of the contents config
+    [params.page.toc]
+      # whether to enable the table of the contents
+      enable = true
+      # whether to keep the static table of the contents in front of the post
+  
+      keepStatic = false
+      # whether to make the table of the contents in the sidebar automatically collapsed
+      
+      auto = true
+    # Code config
+    [params.page.code]
+      copy = true
+      # the maximum number of lines of displayed code by default
+      # 默认展开显示的代码行数
+      maxShownLines = 50
 
   [params.page.share]
     enable = true
@@ -64,29 +107,46 @@ enableGitInfo = true
   [params.footer]
     enable = true
     # Custom content (HTML format is supported)
-    custom = "<a href='https://github.com/edgarfgp/devconflicts.com' target='_blank' rel='noopener'>Open Source Blog By Edgar Gonzalez</a>"
+    custom = ""
     # whether to show Hugo and theme info
-    hugo = false
+    hugo = true
     # whether to show copyright info
-    copyright = false
+    copyright = true
     # whether to show the author
     author = true
     # site creation time
     since = 2022
 
-[params.home.profile]
+  # Section (all posts) page config
+  [params.section]
+    # special amount of posts in each section page
+    paginate = 20
+    # date format (month and day)
+    dateFormat = "01-02"
+    # amount of RSS pages
+    rss = 10
+
+  [params.home.profile]
       # URL of avatar shown in home page
-      avatarURL = "/images/edgar-profile.jpg"
+#      avatarURL = "/images/edgar-profile.jpg"
       # title shown in home page (HTML format is supported)
-      title = "Edgar Gonzalez"
+#      title = "Edgar Gonzalez"
       # subtitle shown in home page (HTML format is supported)
       subtitle = ""
       # whether to use typeit animation for subtitle
       typeit = false
       # whether to show social links
-      social = true
+      #social = true
 
-# Social links
-[params.social]
-Twitter = 'efgpdev'
-Github = 'edgarfgp'
+  [publications]
+  
+  
+    # Link the title of the publication to the publication
+    links_title = false
+    # Link the authors of the publication to the list of publication made by this author
+    links_authors = false
+
+## Social links
+#[params.social]
+#Twitter = 'efgpdev'
+#Github = 'edgarfgp'
