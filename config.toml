@@ -140,11 +140,24 @@ enableEmoji = true
 
   [publications]
   
-  
     # Link the title of the publication to the publication
     links_title = false
     # Link the authors of the publication to the list of publication made by this author
     links_authors = false
+
+[menu]
+  [[menu.main]]
+    weight = 1
+    identifier = "About"
+    # you can add extra information before the name (HTML format is supported), such as icons
+    pre = ""
+    # you can add extra information after the name (HTML format is supported), such as icons
+    post = ""
+    name = "About"
+    url = "/about/"
+    # title will be shown when you hover on this menu link
+    # title will be shown when you hover on this menu link
+    title = "About"
 
 ## Social links
 #[params.social]
