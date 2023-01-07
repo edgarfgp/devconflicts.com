@@ -7,7 +7,7 @@ draft: false
 
 ### Hi there 👋
 
-![Profile](/images/edgar-profile.jpg#imageProfile)
+![Profile](/images/edgar-profile.jpg#profile)
 
 I’m Edgar Gonzalez, and I live between Albacete(Spain) and London(Uk), where I’m a Mobile Developer at Fund Ourselves.
 
