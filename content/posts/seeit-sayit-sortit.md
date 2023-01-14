@@ -55,7 +55,6 @@ We can start by choosing a minimal reproducible example, so we can test our chan
 In our case, a single case union type with a wildcard pattern match will be a good starting point.
 
 ```fsharp
-```fsharp
 type HelpBy =
     |  SayIt
  
