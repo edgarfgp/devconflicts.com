@@ -9,7 +9,7 @@ draft: false
 
 > An F# [Advent Calendar in English 2022](https://sergeytihon.com/2022/10/28/f-advent-calendar-in-english-2022/) blog post. Big thanks to [Sergey Tihon](https://twitter.com/sergey_tihon) for organising F# weekly
 
-If you live in the Uk and use public transport you might have heard the [See it, Say it, Sorted](https://www.btp.police.uk/police-forces/british-transport-police/areas/campaigns/see-it-say-it-sorted/) slogan encouraging you to help in case you see something that does not feel right by saying it and then it will be sorted(not by you but by the police).
+If you live in the UK and use public transport you might have heard the [See it, Say it, Sorted](https://www.btp.police.uk/police-forces/british-transport-police/areas/campaigns/see-it-say-it-sorted/) slogan encouraging you to help in case you see something that does not feel right by saying it, and then it will be sorted(not by you but by the police).
 So in this post, I wanted to play with this phrase and encourage you to do the same but for F#.
 
 ## Introduction
@@ -116,7 +116,7 @@ After reading it I found that a good starting point might be [CheckPatterns.fs](
 
 ## Implementation
 
-But before we start modifying the code, we need to find a clear and meaningful warning message. So I went to the related issue to discuss about this. I got a lot of feedback and suggestions, and I ended up with `Pattern discard is not allowed for union case that takes no data`.
+But before we start modifying the code, we need to find a clear and meaningful warning message. So I went to the related issue to discuss this. I got a lot of feedback and suggestions, and I ended up with `Pattern discard is not allowed for union case that takes no data`.
 Now we need to add our error message to [FSComp.txt](https://github.com/dotnet/fsharp/blob/55c17665cb944a9f4580c6b945d190410d1d0989/src/Compiler/FSComp.txt#L1661). This is the file that contains most of the error messages that the compiler uses.
 
 We need to provide a unique error code, name and message.
@@ -178,7 +178,7 @@ module Tests =
 
 Now it is time to raise a [Pull request](https://github.com/dotnet/fsharp/pull/14055) to validate our fix. The compiler team will help and guide you through the process, ask you to cover more cases, testing to make sure the implementation is bulletproof.
 
-Congratulations! We have just contributed to the F# compiler and it was not that hard, right?
+Congratulations! We have just contributed to the F# compiler, and it was not that hard, right?
 
 ## IDE support
 
